@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ta na Chapa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #0B0F17;               
+            --bg-surface: #161B26;            
+            --bg-surface-elevated: #222A3A;   
+            --primary: #2267e6;               
+            --primary-dark: #164cb3;          
+            --secondary: #2267e6;             
+            --success: #10B981;               
+            --danger: #EF4444;                
+            --warning: #222A3A;               
+            --info: #222A3A;                 
+            --text-on-bg: #FFFFFF;            
+            --text-main: #E2E8F0;             
+            --text-muted: #6B7280;            
+            --border: #222A3A;
+            --font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+            --btn-min-height: 48px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font-family); background-color: var(--bg-base); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        h1, h2, h3, h4 { margin-bottom: 1rem; font-weight: 800; letter-spacing: -0.5px; color: var(--text-on-bg); }
+        p { color: var(--text-muted); margin-bottom: 1rem; }
+
+        header { background-color: var(--bg-surface); padding: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        .app-title { color: var(--text-on-bg); font-size: 1.6rem; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; }
+        .current-role-badge { background: var(--bg-surface-elevated); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.85rem; color: var(--text-main); font-weight: 600; display: flex; align-items: center; gap: 10px; }
+
+        nav { display: flex; background-color: var(--bg-surface); overflow-x: auto; scrollbar-width: none; border-top: 1px solid var(--border); }
+        nav::-webkit-scrollbar { display: none; }
+        nav button { flex: 1; min-width: 100px; background: none; border: none; color: var(--text-muted); padding: 1rem; font-size: 0.9rem; font-family: var(--font-family); font-weight: 600; cursor: pointer; transition: 0.3s; border-bottom: 4px solid transparent; min-height: var(--btn-min-height); display: none; white-space: nowrap; }
+        nav button.active { color: var(--text-on-bg); border-bottom-color: var(--primary); font-weight: 800; }
+
+        main { flex: 1; overflow-y: auto; padding: 1.5rem; position: relative; }
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .card { background: var(--bg-surface); border-radius: 16px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
+        
+        .btn { min-height: var(--btn-min-height); padding: 0 1.5rem; border: none; border-radius: 12px; font-family: var(--font-family); font-size: 1rem; font-weight: 800; cursor: pointer; transition: 0.2s; width: 100%; margin-bottom: 0.5rem; display: inline-flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-primary { background-color: var(--primary); color: var(--text-on-bg); }
+        .btn-primary:hover { background-color: var(--primary-dark); }
+        .btn-success { background-color: var(--primary); color: var(--text-on-bg); }
+        .btn-danger { background-color: var(--danger); color: var(--text-on-bg); }
+        .btn-info { background-color: var(--bg-surface-elevated); color: var(--text-on-bg); } 
+        .btn-warning { background-color: var(--bg-surface-elevated); color: var(--text-on-bg); }
+        .btn-blue-action { background-color: var(--primary); color: var(--text-on-bg); }
+        .btn-outline { background: var(--bg-surface-elevated); border: none; color: var(--text-on-bg); }
+        .btn-outline:hover { background: var(--border); }
+
+        input[type="text"], input[type="hidden"] { width: 100%; min-height: var(--btn-min-height); background: var(--bg-surface-elevated); border: 1px solid var(--border); color: var(--text-main); padding: 0.5rem 1rem; border-radius: 12px; margin-bottom: 1rem; font-size: 1rem; font-family: var(--font-family); }
+        input[type="text"]:focus { border-color: var(--primary); outline: none; }
+
+        .table-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+        .table-btn { aspect-ratio: 1; border-radius: 12px; background: var(--bg-surface-elevated); border: none; color: var(--text-main); font-weight: 800; font-family: var(--font-family); font-size: 1.2rem; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; }
+        .table-btn.selected { background: var(--primary); color: var(--text-on-bg); box-shadow: 0 4px 12px rgba(34, 103, 230, 0.4); }
+
+        .category-title { margin-top: 1.5rem; margin-bottom: 0.8rem; color: var(--text-on-bg); font-size: 1.3rem; border-bottom: 2px solid var(--border); padding-bottom: 5px; text-transform: uppercase; }
+        
+        .visual-menu-carousel { display: flex; overflow-x: auto; gap: 1rem; padding-bottom: 1rem; margin-bottom: 1rem; scroll-behavior: smooth; }
+        .visual-menu-carousel::-webkit-scrollbar { height: 6px; }
+        .visual-menu-carousel::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .visual-menu-item { min-width: 150px; background: var(--bg-surface-elevated); border: none; border-radius: 16px; transition: 0.2s; text-align: center; overflow: hidden; display: flex; flex-direction: column; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .visual-menu-item.has-qty { background: var(--primary); box-shadow: 0 4px 14px rgba(34, 103, 230, 0.4); }
+        
+        .visual-img-placeholder { height: 110px; background-color: var(--bg-surface); background-position: center; background-size: cover; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; opacity: 0.9; }
+        .visual-info { padding: 0.8rem 0.5rem; flex: 1; display: flex; flex-direction: column; justify-content: center;}
+        .visual-info h4 { margin: 0; font-size: 0.95rem; line-height: 1.3; margin-bottom: 5px; color: var(--text-main); font-weight: 800; }
+        .visual-info span { color: var(--text-on-bg); font-weight: 800; font-size: 1.1rem; display: block; margin-bottom: 5px; }
+        .visual-menu-item.has-qty .visual-info h4 { color: var(--text-on-bg); }
+        
+        .qty-controls { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.2); padding: 6px; gap: 4px; }
+        .qty-btn { background: var(--bg-surface-elevated); border: none; color: var(--text-on-bg); font-weight: bold; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        .qty-display { font-weight: 900; font-size: 1.1rem; color: var(--text-on-bg); min-width: 24px; text-align: center; }
+
+        .addons-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 0.8rem; margin-bottom: 1.5rem; background: var(--bg-surface-elevated); padding: 1.2rem; border-radius: 16px; }
+        .addon-item { display: flex; align-items: center; gap: 0.8rem; cursor: pointer; font-size: 0.95rem; padding: 8px; border-radius: 10px; background: var(--bg-surface); transition: 0.2s; user-select: none; font-weight: 600; color: var(--text-main); }
+        .addon-item input { width: 22px; height: 22px; cursor: pointer; accent-color: var(--primary); flex-shrink: 0; }
+        .addon-item-text { display: flex; flex-direction: column; line-height: 1.2; }
+        .price-badge { color: var(--primary); font-weight: 800; font-size: 0.85rem; margin-top: 2px; }
+
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 0; border-bottom: 1px dashed var(--border); }
+        .cart-summary { background: var(--bg-surface-elevated); padding: 1.2rem; border-radius: 12px; margin-top: 1rem; }
+        
+        .kds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+        .kds-card { background: var(--bg-surface); border-top: 4px solid var(--primary); border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .kds-card.delayed { border-top-color: var(--danger); }
+        .order-items-list { margin: 1rem 0; padding-left: 1.2rem; }
+        .recipe-step-list { margin-top: 0.5rem; padding-left: 1.5rem; color: var(--text-muted); }
+
+        /* MODAL CUSTOMIZAÇÃO */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; justify-content: center; align-items: center; backdrop-filter: blur(4px); }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.2s ease; }
+        .modal-content { background: var(--bg-surface); padding: 1.5rem; border-radius: 20px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        #toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 3000; }
+        .toast { background: var(--bg-surface); border-left: 6px solid var(--primary); color: var(--text-main); padding: 1.2rem; border-radius: 12px; animation: slideIn 0.3s forwards; min-width: 260px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .mt-1 { margin-top: 1rem; }
+        .text-center { text-align: center; }
+        
+        .page-header-title { color: var(--text-on-bg); font-weight: 900; text-transform: uppercase; }
+        .call-waiter-btn { background-color: var(--primary); color: var(--text-on-bg); border: none; padding: 0 15px; border-radius: 20px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; font-size: 0.9rem; height: 36px; transition: 0.2s; font-family: var(--font-family); }
+
+        @media (max-width: 600px) { 
+            .grid-2 { grid-template-columns: 1fr; } 
+            .addons-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="app-title">TA NA CHAPA</div>
+        <div class="current-role-badge" id="role-display">
+            <span id="role-name-display">Aguardando Login</span>
+            <button id="btn-request-break" class="btn btn-blue-action" style="display:none; min-height:30px; height:30px; margin:0; font-size:0.8rem; padding:0 10px;" onclick="requestBreak()">Pedir Pausa</button>
+        </div>
+    </header>
+
+    <nav id="main-nav" style="display: none;">
+        <button onclick="nav('waiter')" id="nav-waiter">Garçom</button>
+        <button onclick="nav('grill')" id="nav-grill">Fila</button>
+        <button onclick="nav('recipes')" id="nav-recipes">Manual da Chapa</button>
+        <button onclick="nav('cashier')" id="nav-cashier">Caixa</button>
+        <button onclick="nav('manager')" id="nav-manager">Gerência</button>
+        <button onclick="nav('notifications')" id="nav-notifications">Alertas</button>
+        <button onclick="logout()" id="nav-logout" style="color: var(--danger); font-weight: 800;">Sair</button>
+    </nav>
+
+    <main>
+        <section id="page-login" class="page active">
+            <div class="card" style="max-width: 400px; margin: 2rem auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+                <h2 class="text-center">Painel de Acesso</h2>
+                <button class="btn btn-primary" onclick="login('waiter', 'Garçom Marcos')">Garçom</button>
+                <button class="btn btn-primary" onclick="login('grill', 'Chapeiro Zé')">Chapeiro</button>
+                <button class="btn btn-primary" onclick="login('cashier', 'Caixa Ana')">Caixa</button>
+                <button class="btn btn-info" onclick="login('manager', 'Sr. Geraldo')">Gerência</button>
+                <hr style="border-color: var(--border); margin: 1.5rem 0; border-style: solid;">
+                <button class="btn btn-outline" onclick="login('customer', 'Cliente')">Cardápio Digital</button>
+            </div>
+        </section>
+
+        <section id="page-customer" class="page">
+            <div class="flex-between" style="margin-bottom: 1rem;">
+                <h2 class="page-header-title">Cardápio Autoatendimento</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="call-waiter-btn" onclick="callWaiter('customer')">🔔 Chamar Garçom</button>
+                    <button class="btn btn-danger" style="width: auto; height: 36px; min-height: 36px; margin:0; font-size: 0.85rem;" onclick="logout()">Sair</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <p style="font-size: 0.95rem; color: var(--text-main); font-weight: 600;">
+                    Escolha sua mesa, adicione os itens e clique em <strong>✏️ Personalizar</strong> para deixar o lanche do seu jeito!
+                </p>
+                
+                <label style="color: var(--text-on-bg); font-weight: 800; display: block; margin-bottom: 0.5rem;">Qual é a sua Mesa?</label>
+                <div class="table-grid" id="customer-table-grid"></div>
+
+                <label style="color: var(--text-on-bg); font-weight: 800; display: block; margin-bottom: 0.5rem;">De quem é este pedido?</label>
+                <div class="name-input-container">
+                    <input type="text" id="customer-name-field" placeholder="Digite seu nome (Ex: João)..." style="margin-bottom:0;" oninput="syncManualName('customer')">
+                </div>
+                <hr style="border-color: var(--border); margin: 1rem 0; border-style: solid;">
+                
+                <h3 class="category-title">Lanches</h3>
+                <div class="visual-menu-carousel" id="customer-lanches-menu"></div>
+                
+                <h3 class="category-title">Bebidas</h3>
+                <div class="visual-menu-carousel" id="customer-bebidas-menu"></div>
+
+                <button class="btn btn-outline mt-1" onclick="addToCart('customer')">+ Adicionar Selecionados à Comanda</button>
+            </div>
+
+            <div class="card">
+                <h3 style="color: var(--text-on-bg)">Comanda da Pessoa Selecionada</h3>
+                <div id="customer-cart-list"><p>Selecione os lanches/bebidas definindo as quantidades acima e adicione.</p></div>
+                <div class="cart-summary flex-between mt-1">
+                    <div>Tempo Médio: <strong style="color:var(--primary)">⏱ <span id="customer-cart-est-time">0</span> min</strong></div>
+                    <h3 style="margin:0; color: var(--text-on-bg)">Total: R$ <span id="customer-cart-total">0.00</span></h3>
+                </div>
+                <button class="btn btn-primary mt-1" style="background-color: var(--primary);" onclick="submitOrder('customer')">Confirmar e Enviar Pedido Inteiro</button>
+            </div>
+        </section>
+
+        <section id="page-waiter" class="page">
+            <h2 class="page-header-title" style="margin-bottom:1.5rem;">Módulo Garçom</h2>
+            <div class="card">
+                <label style="color: var(--text-on-bg); font-weight: 800; display: block; margin-bottom: 0.5rem;">Mesa Atendida</label>
+                <div class="table-grid" id="waiter-table-grid"></div>
+
+                <label style="color: var(--text-on-bg); font-weight: 800; display: block; margin-bottom: 0.5rem;">De quem é este pedido?</label>
+                <div class="name-input-container">
+                    <input type="text" id="waiter-name-field" placeholder="Digite o nome do cliente (Ex: João)..." style="margin-bottom:0;">
+                </div>
+                <hr style="border-color: var(--border); margin: 1rem 0; border-style: solid;">
+                
+                <h3 class="category-title">Lanches</h3>
+                <div class="visual-menu-carousel" id="waiter-lanches-menu"></div>
+                
+                <h3 class="category-title">Bebidas</h3>
+                <div class="visual-menu-carousel" id="waiter-bebidas-menu"></div>
+
+                <button class="btn btn-outline mt-1" onclick="addToCart('waiter')">+ Adicionar Base na Comanda</button>
+            </div>
+            
+            <div class="card">
+                <h3 style="color: var(--text-on-bg)">Comanda da Pessoa</h3>
+                <div id="waiter-cart-list"><p>Nenhum item adicionado.</p></div>
+                <div class="cart-summary flex-between mt-1">
+                    <div>Tempo Estipulado: <strong style="color:var(--primary)">⏱ <span id="waiter-cart-est-time">0</span> min</strong></div>
+                    <h3 style="margin:0; color: var(--text-on-bg)">Total: R$ <span id="waiter-cart-total">0.00</span></h3>
+                </div>
+                <button class="btn btn-primary mt-1" onclick="submitOrder('waiter')">Enviar Pedido para Chapa</button>
+            </div>
+
+            <h3 class="page-header-title" style="margin-bottom: 1rem;">Meus Pedidos Ativos</h3>
+            <div id="waiter-orders-list"></div>
+        </section>
+
+        <section id="page-grill" class="page">
+            <div class="flex-between" style="margin-bottom: 0.5rem;">
+                <h2 class="page-header-title">Fila de Preparo</h2>
+                <span style="color: var(--text-on-bg); background-color: var(--primary); padding: 5px 12px; border-radius: 20px; font-weight: bold; font-size:0.85rem;">Auto-Sync</span>
+            </div>
+            <p style="color: var(--text-main); font-weight: 600; margin-bottom:1.5rem;">Siga o <strong>Tempo Estipulado</strong> visível in cada comanda.</p>
+            <div class="kds-grid" id="grill-kds-container"></div>
+        </section>
+
+        <section id="page-recipes" class="page">
+            <h2 class="page-header-title" style="margin-bottom:1.5rem;">Manual da Chapa</h2>
+            <div class="kds-grid" id="recipes-container"></div>
+        </section>
+
+        <section id="page-cashier" class="page">
+            <h2 class="page-header-title" style="margin-bottom:1.5rem;">Frente de Caixa</h2>
+            <div class="card" id="cashier-orders-list"></div>
+        </section>
+
+        <section id="page-manager" class="page">
+            <h2 class="page-header-title" style="margin-bottom:1.5rem;">Dashboard Gerencial</h2>
+            <div class="kds-grid mb-1">
+                <div class="card kds-card"><h3>Faturamento Diário</h3><h1 style="color: var(--success)">R$ <span id="metric-sales">0,00</span></h1></div>
+                <div class="card kds-card"><h3>Tempo Médio Real</h3><h1><span id="metric-time">0</span> min</h1><p style="margin:0; font-size:0.8rem">Meta Estipulada: <strong id="metric-est-time">0</strong> min</p></div>
+                <div class="card kds-card"><h3>Pedidos Concluídos</h3><h1 style="color: var(--text-on-bg)"><span id="metric-orders-count">0</span></h1></div>
+            </div>
+            <h3 class="mt-1 page-header-title" style="margin-bottom:1rem;">Gestão de Pausas</h3>
+            <div id="manager-breaks-list"></div>
+        </section>
+
+        <section id="page-notifications" class="page">
+            <h2 class="page-header-title" style="margin-bottom:1.5rem;">Central de Alertas</h2>
+            <div class="card" id="notifications-history"></div>
+        </section>
+    </main>
+
+    <div id="customize-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="page-header-title" style="margin-bottom: 1rem; font-size: 1.4rem;" id="modal-item-name">Personalizar Lanche</h2>
+            
+            <label style="color: var(--text-on-bg); font-weight: 800; display: block; margin-bottom: 0.5rem;">Complementos Gratuitos</label>
+            <div class="addons-grid" id="modal-free-addons">
+                <label class="addon-item"><input type="checkbox" value="Ketchup"> <div class="addon-item-text">Ketchup</div></label>
+                <label class="addon-item"><input type="checkbox" value="Maionese"> <div class="addon-item-text">Maionese</div></label>
+                <label class="addon-item"><input type="checkbox" value="Maionese Verde"> <div class="addon-item-text">Maionese Verde</div></label>
+            </div>
+
+            <label style="color: var(--text-on-bg); font-weight: 800; display: block; margin-bottom: 0.5rem;">Adicionais Pagos (+R$)</label>
+            <div class="addons-grid" id="modal-paid-addons"></div>
+            
+            <label style="display:block; margin-bottom: 0.5rem; font-weight: 800;">Observações da Cozinha</label>
+            <input type="text" id="modal-notes" placeholder="Ex: Tirar cebola, sem sal...">
+
+            <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+                <button class="btn btn-outline" style="background-color: var(--danger); color: white;" onclick="closeCustomizeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="saveCustomization()">Salvar Personalização</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+
+    <script>
+        const menuData = {
+            lanches: [
+                { id: 'hamburguer', name: 'Hambúrguer simples', price: 18.00, prepTime: 5, emoji: '', img: 'https://images.unsplash.com/photo-1508736793122-f516e3ba5569?q=80&w=386&auto=format&fit=crop&ixlib=rb-4.1.0', recipe: ['Selar pão na manteiga', 'Grelhar hambúrguer', 'Derreter queijo', 'Montar'] },
+                { id: 'xduplo', name: 'X-Duplo', price: 28.00, prepTime: 8, emoji: '', img: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=300&q=80', recipe: ['Selar pão', '2x hambúrgueres', '2x queijo', 'Montagem'] },
+                { id: 'xsalada', name: 'X-Salada', price: 20.00, prepTime: 6, emoji: '', img: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?q=80&w=872&auto=format&fit=crop', recipe: ['Selar pão', 'Hambúrguer c/ queijo', 'Alface e tomate', 'Maionese'] },
+                { id: 'xegg', name: 'X-Egg', price: 22.00, prepTime: 7, emoji: '', img: 'https://images.unsplash.com/photo-1565299507177-b0ac66763828?q=80&w=422&auto=format&fit=crop', recipe: ['Selar pão', 'Hambúrguer c/ queijo', 'Ovo frito', 'Montar'] },
+                { id: 'xtudo', name: 'X-Tudo', price: 30.00, prepTime: 10, emoji: '', img: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxyUFUOHCgooeDcP2PYZumQ1BEa-0qAOCjcw&s', recipe: ['Selar pão', 'Hambúrguer, queijo, ovo, bacon', 'Calabresa', 'Salada'] },
+                { id: 'xbacon', name: 'X-Bacon', price: 25.00, prepTime: 8, emoji: '', img: 'https://plus.unsplash.com/premium_photo-1675283476222-6a1a01d6a0ba?q=80&w=870&auto=format&fit=crop', recipe: ['Selar pão', 'Hambúrguer c/ queijo', 'Bacon frito', 'Montar'] },
+                { id: 'xcalabresa', name: 'X-Calabresa', price: 24.00, prepTime: 8, emoji: '', img: 'https://images.rappi.com.br/products/1720885748362_9bcc1fc1-1e87-46cf-bd95-9e4d1eb0ff9e_0007220323ec2fedj7if.png?d=900x750&e=webp&q=30', recipe: ['Selar pão', 'Hambúrguer c/ queijo', 'Calabresa fatiada', 'Montar'] },
+                { id: 'xfrango', name: 'X-Frango', price: 23.00, prepTime: 8, emoji: '', img: 'https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=300&q=80', recipe: ['Selar pão', 'Filé de frango', 'Queijo derretido', 'Salada'] },
+                { id: 'topmodel', name: 'Top Model Especial', price: 35.00, prepTime: 12, emoji: '', img: 'https://plus.unsplash.com/premium_photo-1668202961193-4c5a66a2d68d?q=80&w=388&auto=format&fit=crop', recipe: ['Pão brioche', '2x hambúrgueres artesanais', 'Cheddar', 'Bacon duplo'] }
+            ],
+            adicionais: [
+                { id: 'pao_frances', name: 'Pão francês', price: 10.00 },
+                { id: 'salsicha', name: 'Salsicha', price: 3.00 },
+                { id: 'bacon', name: 'Bacon', price: 6.00 },
+                { id: 'calabresa', name: 'Calabresa', price: 5.00 },
+                { id: 'milho', name: 'Milho', price: 2.00 },
+                { id: 'carne', name: 'Carne', price: 7.00 },
+                { id: 'presunto', name: 'Presunto', price: 5.00 },
+                { id: 'queijo', name: 'Queijo', price: 6.00 }
+            ],
+            bebidas: [
+                { id: 'suco_laranja', name: 'Suco Laranja', price: 10.00, prepTime: 1, emoji: '', img: 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=300&q=80' },
+                { id: 'suco_maracuja', name: 'Suco Maracujá', price: 12.00, prepTime: 1, emoji: '', img: 'https://espaconatelie.com.br/wp-content/uploads/2024/11/suco-maracuja-natural.jpg' },
+                { id: 'coca', name: 'Coca-Cola 350ml', price: 8.00, prepTime: 0, emoji: '', img: 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=300&q=80' },
+                { id: 'guarana', name: 'Guaraná 350ml', price: 8.00, prepTime: 0, emoji: '', img: 'https://majoricario.com.br/wp-content/uploads/2021/02/Guarana.png' },
+                { id: 'agua_sem', name: 'Água s/ gás', price: 5.00, prepTime: 0, emoji: '', img: 'https://www.imigrantesbebidas.com.br/bebida/images/products/full/2893-agua-mineral-crystal-sem-gas-500ml.jpg' },
+                { id: 'agua_com', name: 'Água c/ gás', price: 6.00, prepTime: 0, emoji: '', img: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=300&q=80' }
+            ]
+        };
+
+        const state = {
+            currentUserRole: null, currentUserName: null,
+            orders: [], breakRequests: [], notifications: [],
+            orderCounter: 100, carts: { waiter: [], customer: [] },
+            selectedTable: { waiter: null, customer: null },
+            selectedPerson: { waiter: null, customer: null },
+            selectedItems: { waiter: {}, customer: {} }
+        };
+
+        const rbacRules = {
+            'login': [], 
+            'waiter': ['waiter', 'notifications', 'logout'],
+            'grill': ['grill', 'recipes', 'notifications', 'logout'],
+            'cashier': ['cashier', 'notifications', 'logout'], 
+            'manager': ['manager', 'notifications', 'logout'],
+            'customer': []
+        };
+    
+
+        let currentCustomizing = null;
+
+        const roleTranslations = {
+            'grill': 'Chapeiro',
+            'waiter': 'Garçom',
+            'cashier': 'Caixa',
+            'manager': 'Gerente'
+        };
+
+        function initMenu() {
+            const buildVisualMenu = (items, context, category) => items.map(i => {
+                const visualStyle = i.img ? `style="background-image: url('${i.img}'); color: transparent;"` : ``;
+                const content = i.img ? '' : i.emoji;
+                return `
+                <div class="visual-menu-item" id="item-${context}-${i.id}">
+                    <div class="visual-img-placeholder" ${visualStyle}>${content}</div>
+                    <div class="visual-info"><h4>${i.name}</h4><span>R$ ${i.price.toFixed(2)}</span></div>
+                    <div class="qty-controls">
+                        <button class="qty-btn" onclick="changeQty('${context}', '${i.id}', -1, '${i.price}|${i.name}|${i.prepTime}', '${category}')">-</button>
+                        <span class="qty-display" id="qty-lbl-${context}-${i.id}">0</span>
+                        <button class="qty-btn" onclick="changeQty('${context}', '${i.id}', 1, '${i.price}|${i.name}|${i.prepTime}', '${category}')">+</button>
+                    </div>
+                </div>`
+            }).join('');
+
+            ['waiter', 'customer'].forEach(ctx => {
+                document.getElementById(`${ctx}-lanches-menu`).innerHTML = buildVisualMenu(menuData.lanches, ctx, 'lanche');
+                document.getElementById(`${ctx}-bebidas-menu`).innerHTML = buildVisualMenu(menuData.bebidas, ctx, 'bebida');
+            });
+
+            const paidAddonsHtml = menuData.adicionais.map(a => `
+                <label class="addon-item">
+                    <input type="checkbox" value="${a.price}|${a.name}">
+                    <div class="addon-item-text">
+                        <span>${a.name}</span>
+                        <span class="price-badge">+ R$ ${a.price.toFixed(2)}</span>
+                    </div>
+                </label>
+            `).join('');
+            
+            document.getElementById('modal-paid-addons').innerHTML = paidAddonsHtml;
+            document.getElementById('recipes-container').innerHTML = menuData.lanches.map(l => `<div class="card kds-card"><h3>${l.name}</h3><ul class="recipe-step-list">${l.recipe.map(step => `<li>${step}</li>`).join('')}</ul></div>`).join('');
+            renderTablePersonGrids();
+        }
+
+        function changeQty(context, id, delta, dataStr, category) {
+            if (!state.selectedItems[context]) state.selectedItems[context] = {};
+            if (!state.selectedItems[context][id]) {
+                state.selectedItems[context][id] = { qty: 0, data: dataStr, category: category };
+            }
+
+            state.selectedItems[context][id].qty += delta;
+
+            if (state.selectedItems[context][id].qty <= 0) {
+                state.selectedItems[context][id].qty = 0;
+                document.getElementById(`item-${context}-${id}`).classList.remove('has-qty');
+            } else {
+                document.getElementById(`item-${context}-${id}`).classList.add('has-qty');
+            }
+
+            document.getElementById(`qty-lbl-${context}-${id}`).innerText = state.selectedItems[context][id].qty;
+        }
+
+        function clearSelections(context) {
+            state.selectedItems[context] = {};
+            document.querySelectorAll(`#page-${context} .visual-menu-item`).forEach(el => el.classList.remove('has-qty'));
+            document.querySelectorAll(`#page-${context} .qty-display`).forEach(el => el.innerText = '0');
+        }
+
+        function renderTablePersonGrids() {
+            ['customer', 'waiter'].forEach(context => {
+                let tableHtml = ''; for(let i=1; i<=12; i++) tableHtml += `<button class="table-btn" id="btn-table-${context}-${i}" onclick="selectTable('${context}', ${i})">${i}</button>`;
+                document.getElementById(`${context}-table-grid`).innerHTML = tableHtml;
+            });
+        }
+
+        function selectTable(context, num) {
+            state.selectedTable[context] = num;
+            document.querySelectorAll(`#${context}-table-grid .table-btn`).forEach(b => b.classList.remove('selected'));
+            document.getElementById(`btn-table-${context}-${num}`).classList.add('selected');
+        }
+
+        window.onload = initMenu;
+
+        function login(role, userName) {
+            state.currentUserRole = role; state.currentUserName = userName;
+            document.getElementById('role-name-display').innerText = `Logado: ${userName}`;
+            document.getElementById('btn-request-break').style.display = ['waiter', 'grill', 'cashier'].includes(role) ? 'block' : 'none';
+            document.querySelectorAll('#main-nav button').forEach(btn => btn.style.display = rbacRules[role].includes(btn.id.replace('nav-', '')) ? 'block' : 'none');
+            document.getElementById('main-nav').style.display = role === 'customer' || role === 'login' ? 'none' : 'flex';
+            if(state.carts[role]) state.carts[role] = []; 
+            if(role === 'waiter') { renderCart('waiter'); clearSelections('waiter'); }
+            if(role === 'customer') { renderCart('customer'); clearSelections('customer'); }
+            nav(role);
+        }
+
+        function logout() { login('login', ''); }
+
+        function nav(pageId) {
+            if (state.currentUserRole !== 'login' && !rbacRules[state.currentUserRole].includes(pageId) && pageId !== state.currentUserRole) return;
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('#main-nav button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            const activeBtn = document.getElementById(`nav-${pageId}`); if(activeBtn) activeBtn.classList.add('active');
+            if(pageId === 'waiter') renderWaiterOrders(); if(pageId === 'grill') renderKDS();
+            if(pageId === 'cashier') renderCashier(); if(pageId === 'manager') renderManagerDashboard();
+        }
+
+        function requestBreak() {
+            state.breakRequests.push({ id: Date.now(), name: state.currentUserName, role: state.currentUserRole, time: new Date().toLocaleTimeString(), status: 'pending' });
+            showToast('Pausa Solicitada', 'A gerência foi notificada.', 'warning');
+        }
+
+        function handleBreak(id, action) {
+            const req = state.breakRequests.find(b => b.id === id);
+            if(req) {
+                req.status = action;
+                const statusText = action === 'approved' ? 'APROVADA' : 'NEGADA';
+                logNotification(`A pausa de ${req.name} foi ${statusText}.`);
+                showToast('Gerência', `Pausa de ${req.name} ${statusText}.`, action === 'approved' ? 'success' : 'danger');
+                renderManagerDashboard();
+            }
+        }
+
+        function callWaiter(context) {
+            const tableNum = state.selectedTable[context];
+            if(!tableNum) return showToast('Atenção', 'Selecione a mesa antes de chamar.', 'warning');
+            logNotification(`🔔 <b>CHAMADO:</b> A Mesa ${tableNum} solicitou atendimento.`);
+            showToast('Garçom Chamado', 'Um de nossos garçom já está a caminho.', 'success');
+        }
+
+        function addToCart(context) {
+            const currentSelections = state.selectedItems[context] || {};
+            const itemsToProcess = Object.keys(currentSelections).filter(id => currentSelections[id].qty > 0);
+
+            if(itemsToProcess.length === 0) {
+                return showToast('Atenção', 'Aumente a quantidade (+) de algum item.', 'warning');
+            }
+
+            itemsToProcess.forEach(id => {
+                const itemMeta = currentSelections[id];
+                const [priceStr, name, prepTimeStr] = itemMeta.data.split('|');
+                const basePrice = parseFloat(priceStr);
+                const itemTime = parseInt(prepTimeStr) || 0;
+
+                for (let count = 0; count < itemMeta.qty; count++) {
+                    state.carts[context].push({ 
+                        name: name, 
+                        basePrice: basePrice,
+                        price: basePrice, 
+                        prepTime: itemTime, 
+                        category: itemMeta.category,
+                        notes: "",
+                        freeAddons: [],
+                        paidAddons: []
+                    });
+                }
+            });
+            
+            clearSelections(context);
+            renderCart(context);
+            showToast('Comanda Atualizada', 'Lanches adicionados. Personalize-os se necessário.', 'info');
+        }
+
+        function removeCartItem(context, index) { state.carts[context].splice(index, 1); renderCart(context); }
+
+        function renderCart(context) {
+            const list = document.getElementById(`${context}-cart-list`), totalEl = document.getElementById(`${context}-cart-total`), timeEl = document.getElementById(`${context}-cart-est-time`), cart = state.carts[context];
+            if(cart.length === 0) { list.innerHTML = '<p>Selecione itens definindo as quantidades acima e adicione.</p>'; totalEl.innerText = '0.00'; timeEl.innerText = '0'; return; }
+
+            let total = 0, maxEstTime = Math.max(...cart.map(i => i.prepTime));
+            list.innerHTML = cart.map((item, idx) => {
+                total += item.price;
+                const isLanche = item.category === 'lanche';
+                const customizeBtn = isLanche ? `<button class="btn btn-warning" style="min-height:30px; width:auto; padding:0 10px; font-size: 0.8rem; margin:0;" onclick="openCustomizeModal('${context}', ${idx})">✏️ Personalizar</button>` : '';
+
+                let extrasHtml = '';
+                if(item.notes || (item.freeAddons && item.freeAddons.length > 0) || (item.paidAddons && item.paidAddons.length > 0)) {
+                    extrasHtml = `<div style="font-size: 0.85rem; color: var(--text-muted); background: var(--bg-surface-elevated); padding: 6px 10px; border-radius: 8px; width: 100%; margin-top: 5px;">
+                        ${item.freeAddons?.length ? `<strong>Grátis:</strong> ${item.freeAddons.join(', ')}<br>` : ''}
+                        ${item.paidAddons?.length ? `<strong>Extras:</strong> ${item.paidAddons.map(p=>p.name).join(', ')}<br>` : ''}
+                        ${item.notes ? `<strong>Obs:</strong> ${item.notes}` : ''}
+                    </div>`;
+                }
+
+                return `<div class="cart-item" style="flex-direction: column; align-items: flex-start; gap: 5px;">
+                    <div class="flex-between" style="width: 100%;">
+                        <div><strong>${item.name}</strong> <span style="color: var(--primary); font-weight: bold;">(R$ ${item.price.toFixed(2)})</span></div>
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            ${customizeBtn}
+                            <button class="btn btn-outline" style="min-height:30px; width:auto; padding:0 10px; background:var(--danger); color:white; margin:0;" onclick="removeCartItem('${context}', ${idx})">X</button>
+                        </div>
+                    </div>
+                    ${extrasHtml}
+                </div>`
+            }).join('');
+            totalEl.innerText = total.toFixed(2); timeEl.innerText = maxEstTime;
+        }
+
+        function openCustomizeModal(context, idx) {
+            currentCustomizing = { context, idx };
+            const item = state.carts[context][idx];
+            
+            document.getElementById('modal-item-name').innerText = `Personalizar: ${item.name}`;
+            document.getElementById('modal-notes').value = item.notes || '';
+            
+            document.querySelectorAll('#modal-free-addons input').forEach(cb => {
+                cb.checked = item.freeAddons && item.freeAddons.includes(cb.value);
+            });
+
+            document.querySelectorAll('#modal-paid-addons input').forEach(cb => {
+                const [pPrice, pName] = cb.value.split('|');
+                cb.checked = item.paidAddons && item.paidAddons.some(p => p.name === pName);
+            });
+
+            document.getElementById('customize-modal').classList.add('active');
+        }
+
+        function closeCustomizeModal() {
+            document.getElementById('customize-modal').classList.remove('active');
+            currentCustomizing = null;
+        }
+
+        function saveCustomization() {
+            if(!currentCustomizing) return;
+            const { context, idx } = currentCustomizing;
+            const item = state.carts[context][idx];
+
+            item.notes = document.getElementById('modal-notes').value.trim();
+
+            const freeCbs = document.querySelectorAll('#modal-free-addons input[type="checkbox"]:checked');
+            item.freeAddons = Array.from(freeCbs).map(cb => cb.value);
+
+            const paidCbs = document.querySelectorAll('#modal-paid-addons input[type="checkbox"]:checked');
+            item.paidAddons = [];
+            let extraPrice = 0;
+            paidCbs.forEach(cb => {
+                const [pPrice, pName] = cb.value.split('|');
+                const val = parseFloat(pPrice);
+                item.paidAddons.push({ name: pName, price: val });
+                extraPrice += val;
+            });
+
+            item.price = item.basePrice + extraPrice;
+
+            closeCustomizeModal();
+            renderCart(context);
+            showToast('Lanche Atualizado', 'As observações foram salvas!', 'success');
+        }
+
+        function submitOrder(context) {
+            const tableNum = state.selectedTable[context], cart = state.carts[context];
+            if(!tableNum) return showToast('Atenção', 'Selecione a MESA no passo 1.', 'warning');
+            if(cart.length === 0) return showToast('Atenção', 'Adicione pelo menos um item ao carrinho.', 'warning');
+
+            const manualName = document.getElementById(`${context}-name-field`)?.value.trim() || "Cliente";
+
+            const estimatedTime = Math.max(...cart.map(i => i.prepTime));
+            const newOrder = {
+                id: ++state.orderCounter, table: `Mesa ${tableNum} (${manualName})`, items: JSON.parse(JSON.stringify(cart)),
+                total: cart.reduce((acc, item) => acc + item.price, 0), status: 'pending', source: context === 'customer' ? 'Totem' : 'Garçom',
+                timestamp: new Date().getTime(), prepTimeReal: null, estimatedTime: estimatedTime, paymentMethod: null
+            };
+
+            state.orders.push(newOrder); state.carts[context] = []; renderCart(context);
+            if (document.getElementById(`${context}-name-field`)) {
+                document.getElementById(`${context}-name-field`).value = '';
+            }
+
+            showToast('Sucesso', `Pedido #${newOrder.id} enviado para a chapa!`, 'success');
+            if(context === 'waiter') renderWaiterOrders();
+        }
+
+        function renderWaiterOrders() {
+            const list = document.getElementById('waiter-orders-list'), myOrders = state.orders.filter(o => o.status !== 'completed' && o.source === 'Garçom');
+            if(myOrders.length === 0) { list.innerHTML = '<p style="font-weight:600;">Nenhum pedido ativo no momento.</p>'; return; }
+            list.innerHTML = myOrders.map(o => `<div class="card flex-between" style="padding: 1rem;"><div><strong>#${o.id} - ${o.table}</strong><br><small>⏱ Est: ${o.estimatedTime}m</small></div><span style="font-weight: bold; background: var(--primary); color: var(--text-on-bg); padding: 4px 8px; border-radius: 6px;">${o.status === 'ready' ? 'PRONTO' : 'PREPARANDO'}</span></div>`).join('');
+        }
+
+        function renderKDS() {
+            const grid = document.getElementById('grill-kds-container'), pendingOrders = state.orders.filter(o => o.status === 'pending');
+            if(pendingOrders.length === 0) { grid.innerHTML = '<p style="font-weight:600;">Chapa limpa por enquanto!</p>'; return; }
+            const now = new Date().getTime();
+            grid.innerHTML = pendingOrders.map(o => {
+                const elapsedMins = Math.floor((now - o.timestamp) / 60000), isDelayed = elapsedMins > o.estimatedTime;
+                return `<div class="card kds-card ${isDelayed ? 'delayed' : ''}"><div class="flex-between"><h3>#${o.id} <span style="font-size:0.8rem; background:var(--bg-surface-elevated); padding:2px 5px; border-radius:4px; color: var(--text-main);">${o.source}</span></h3><div style="text-align: right"><span style="display:block; font-weight:800; color: ${isDelayed ? 'var(--danger)' : 'var(--text-on-bg)'}">${elapsedMins} min</span><small style="color: var(--primary); font-weight:600;">Meta: ${o.estimatedTime} min</small></div></div><p style="color: var(--primary); font-size: 1.1rem; margin-top: 10px;"><strong>${o.table}</strong></p>
+                <ul class="order-items-list">${o.items.map(i => {
+                    let extrasStr = [];
+                    if(i.freeAddons && i.freeAddons.length) extrasStr.push(`Grátis: ${i.freeAddons.join(', ')}`);
+                    if(i.paidAddons && i.paidAddons.length) extrasStr.push(`Extras: ${i.paidAddons.map(p=>p.name).join(', ')}`);
+                    if(i.notes) extrasStr.push(`Obs: ${i.notes}`);
+                    const finalNotes = extrasStr.join(' | ');
+                    
+                    return `<li><strong>${i.name}</strong> ${finalNotes ? `<br><span style="color:var(--danger); font-size:0.85rem; font-weight: bold;">${finalNotes}</span>` : ''}</li>`;
+                }).join('')}</ul>
+                <button class="btn btn-primary mt-1" onclick="markOrderReady(${o.id})">Pronto</button></div>`
+            }).join('');
+        }
+
+        function markOrderReady(id) {
+            const order = state.orders.find(o => o.id === id);
+            if(order) {
+                order.status = 'ready'; order.prepTimeReal = Math.floor((new Date().getTime() - order.timestamp) / 60000);
+                renderKDS(); logNotification(`Pedido #${order.id} (${order.table}) pronto.`);
+                showToast('Chapa', `Pedido #${order.id} liberado.`, 'success');
+            }
+        }
+
+        function renderCashier() {
+            const list = document.getElementById('cashier-orders-list'), readyOrders = state.orders.filter(o => o.status === 'ready');
+            if(readyOrders.length === 0) { list.innerHTML = '<p>Nenhum pedido aguardando pagamento.</p>'; return; }
+            
+            list.innerHTML = readyOrders.map(o => {
+                // Monta a listagem amigável dos itens para exibição no caixa
+                const itemsHtml = o.items.map(i => {
+                    let details = [];
+                    if(i.freeAddons && i.freeAddons.length) details.push(`Grátis: ${i.freeAddons.join(', ')}`);
+                    if(i.paidAddons && i.paidAddons.length) details.push(`Extras: ${i.paidAddons.map(p=>p.name).join(', ')}`);
+                    if(i.notes) details.push(`Obs: ${i.notes}`);
+                    const detailsStr = details.join(' | ');
+
+                    return `<div style="font-size: 0.9rem; margin-top: 4px; padding-left: 10px; border-left: 2px solid var(--primary); color: var(--text-main);">
+                        • <strong>${i.name}</strong> - R$ ${i.price.toFixed(2)}
+                        ${detailsStr ? `<br><small style="color: var(--text-muted);">${detailsStr}</small>` : ''}
+                    </div>`;
+                }).join('');
+
+                return `
+                <div class="card" style="border-left: 4px solid var(--success);">
+                    <div class="flex-between" style="margin-bottom: 1rem; align-items: flex-start;">
+                        <div>
+                            <strong>#${o.id} - ${o.table}</strong>
+                            <div style="margin-top: 8px;">${itemsHtml}</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <span style="color: var(--success); font-weight: bold; font-size: 1.4rem; display: block;">R$ ${o.total.toFixed(2)}</span>
+                        </div>
+                    </div>
+                    <div class="flex-between" style="background: var(--bg-surface-elevated); padding: 10px; border-radius: 8px;">
+                        <span style="font-size: 0.9rem; font-weight: 600;">Método de Pagamento:</span>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <select id="pay-${o.id}" style="margin:0; min-height:36px; height:36px; width:140px; font-size:0.9rem; background: var(--bg-base); font-family: var(--font-family); color: var(--text-main); border: 1px solid var(--border); border-radius: 8px;">
+                                <option value="Pix">Pix</option>
+                                <option value="Crédito">Cartão Crédito</option>
+                                <option value="Débito">Cartão Débito</option>
+                                <option value="Dinheiro">Dinheiro</option>
+                            </select>
+                            <button class="btn btn-primary" style="margin:0; width: auto; height:36px; min-height:36px; background-color: var(--primary);" onclick="checkoutOrder(${o.id})">Pagar</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function checkoutOrder(id) {
+            const order = state.orders.find(o => o.id === id);
+            if(order) {
+                order.status = 'completed';
+                order.paymentMethod = document.getElementById(`pay-${id}`).value;
+                renderCashier();
+                logNotification(`Pedido #${order.id} pago via ${order.paymentMethod}.`);
+                showToast('Caixa', `Pedido #${order.id} finalizado!`, 'success');
+            }
+        }
+
+        function renderManagerDashboard() {
+            const completedOrders = state.orders.filter(o => o.status === 'completed');
+            document.getElementById('metric-sales').innerText = completedOrders.reduce((acc, o) => acc + o.total, 0).toFixed(2);
+            document.getElementById('metric-orders-count').innerText = completedOrders.length;
+            const readiedOrders = state.orders.filter(o => o.prepTimeReal !== null);
+            if(readiedOrders.length > 0) {
+                const avgReal = readiedOrders.reduce((acc, o) => acc + o.prepTimeReal, 0) / readiedOrders.length;
+                const avgEst = readiedOrders.reduce((acc, o) => acc + o.estimatedTime, 0) / readiedOrders.length;
+                const timeEl = document.getElementById('metric-time');
+                timeEl.innerText = avgReal.toFixed(1); timeEl.style.color = avgReal > avgEst ? 'var(--danger)' : 'var(--text-on-bg)';
+                document.getElementById('metric-est-time').innerText = avgEst.toFixed(1);
+            }
+
+            const breaksList = document.getElementById('manager-breaks-list');
+            const pendingBreaks = state.breakRequests.filter(b => b.status === 'pending');
+            if(pendingBreaks.length === 0) {
+                breaksList.innerHTML = '<p style="font-weight: 600;">Nenhuma solicitação de pausa pendente.</p>';
+            } else {
+                breaksList.innerHTML = pendingBreaks.map(b => {
+                    const translatedRole = roleTranslations[b.role] || b.role;
+                    return `
+                    <div class="card flex-between" style="padding: 1rem; margin-bottom: 0.5rem; background: var(--bg-surface-elevated);">
+                        <div>
+                            <strong>${b.name} (${translatedRole})</strong><br>
+                            <small>Solicitado às ${b.time}</small>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-primary" style="width:auto; min-height:36px; height:36px; padding:0 15px; margin:0;" onclick="handleBreak(${b.id}, 'approved')">Liberar</button>
+                            <button class="btn btn-danger" style="width:auto; min-height:36px; height:36px; padding:0 15px; margin:0;" onclick="handleBreak(${b.id}, 'denied')">Negar</button>
+                        </div>
+                    </div>
+                `}).join('');
+            }
+        }
+
+        function logNotification(message) { state.notifications.unshift(`[${new Date().toLocaleTimeString()}] ${message}`); const historyBox = document.getElementById('notifications-history'); if(historyBox) historyBox.innerHTML = state.notifications.map(n => `<div style="padding:0.5rem 0; border-bottom:1px dashed var(--border)">${n}</div>`).join(''); }
+        function showToast(title, message, colorVar = 'primary') { const container = document.getElementById('toast-container'), toast = document.createElement('div'); toast.className = 'toast'; toast.style.borderLeftColor = `var(--${colorVar})`; toast.innerHTML = `<strong>${title}</strong><br><small>${message}</small>`; container.appendChild(toast); setTimeout(() => { toast.style.animation = 'slideIn 0.3s forwards reverse'; setTimeout(() => toast.remove(), 300); }, 4000); }
+
+        setInterval(() => { if(state.currentUserRole === 'grill') renderKDS(); }, 60000);
+    </script>
+</body>
+</html>
