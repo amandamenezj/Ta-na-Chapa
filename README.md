@@ -1,4 +1,4 @@
-# Top-Model-Lanches
+# Ta na Chapa
 Desenvolvido com HTML5, CSS3 e JAVASCRIPT para apresentar um trailer de lanches de forma moderna e organizada. O projeto conta com seções apresentando cardápio, informações do estabelecimento e um design organizado, moderno e responsivo.
 
 # Sobre o projeto
